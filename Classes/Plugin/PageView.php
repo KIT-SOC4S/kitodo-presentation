@@ -274,7 +274,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
             }
 	  $fulltext['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
 	} else if (FullTextGenerator::checkLocal($this->doc)) {
-	  $fulltext['url'] = FullTextGenerator::getLocalPath($this->doc);
+	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->doc, $this->piVars['page']);
 	} else {
 	  $this->logger->log(LogLevel::WARNING, 'No fulltext ' . $this->doc->pid );
             Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
@@ -358,7 +358,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 
 	if ($_GET[$this->prefixId]["create"] == 1) {
 	  $this->logger->log(LogLevel::WARNING, "PageView main create value: "  . $_GET[$this->prefixId]["create"]);
-	  FullTextGenerator::createFullText($this->doc);
+	  FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
 	}
         if (
             $this->doc === null
