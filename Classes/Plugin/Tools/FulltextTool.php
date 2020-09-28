@@ -13,7 +13,8 @@
 namespace Kitodo\Dlf\Plugin\Tools;
 
 use Kitodo\Dlf\Common\Helper;
-
+use Kitodo\Dlf\Plugin\FullTextGenerator;
+use TYPO3\CMS\Core\Log\LogLevel;
 /**
  * Fulltext tool for the plugin 'Toolbox' of the 'dlf' extension
  *
@@ -74,9 +75,12 @@ class FulltextTool extends \Kitodo\Dlf\Common\AbstractPlugin
         // Load template file.
         $this->getTemplate();
         $fullTextFile = $this->doc->physicalStructureInfo[$this->doc->physicalStructure[$this->piVars['page']]]['files'][$this->conf['fileGrpFulltext']];
-        if (!empty($fullTextFile)) {
+	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+	// Here we can add new functions buttons
+	if (!empty($fullTextFile) || FullTextGenerator::checkLocal($this->doc)) {
+	    $this->logger->log(LogLevel::WARNING, "FulltextTool " . strval(FullTextGenerator::checkLocal($this->doc)));
             $markerArray['###FULLTEXT_SELECT###'] = '<a class="select switchoff" id="tx-dlf-tools-fulltext" title="" data-dic="fulltext-on:' . htmlspecialchars($this->pi_getLL('fulltext-on', '')) . ';fulltext-off:' . htmlspecialchars($this->pi_getLL('fulltext-off', '')) . '">&nbsp;</a>';
-        } else {
+	} else {
             $markerArray['###FULLTEXT_SELECT###'] = '<span class="no-fulltext">' . htmlspecialchars($this->pi_getLL('fulltext-not-available', '')) . '</span>';
         }
         $content .= $this->templateService->substituteMarkerArray($this->template, $markerArray);

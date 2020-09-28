@@ -14,6 +14,8 @@ namespace Kitodo\Dlf\Plugin;
 
 use Kitodo\Dlf\Common\Helper;
 use Kitodo\Dlf\Common\IiifManifest;
+use Kitodo\Dlf\Plugin\FullTextGenerator;
+use TYPO3\CMS\Core\Log\LogLevel;
 use Ubl\Iiif\Presentation\Common\Model\Resources\ManifestInterface;
 use Ubl\Iiif\Presentation\Common\Vocabulary\Motivation;
 
@@ -223,7 +225,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         while ($fileGrp = @array_pop($fileGrps)) {
             // Get image link.
             if (!empty($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp])) {
-                $image['url'] = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp]);
+		$image['url'] = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$fileGrp]);
                 if ($this->conf['useInternalProxy']) {
                     // Configure @action URL for form.
                     $linkConf = [
@@ -256,8 +258,10 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
     {
         $fulltext = [];
         // Get fulltext link.
+	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+
         if (!empty($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']])) {
-            $fulltext['url'] = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
+	  $fulltext['url'] = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
             if ($this->conf['useInternalProxy']) {
                 // Configure @action URL for form.
                 $linkConf = [
@@ -268,8 +272,11 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
                 ];
                 $fulltext['url'] = $this->cObj->typoLink_URL($linkConf);
             }
-            $fulltext['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
-        } else {
+	  $fulltext['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
+	} else if (FullTextGenerator::checkLocal($this->doc)) {
+	  $fulltext['url'] = FullTextGenerator::getLocalPath($this->doc);
+	} else {
+	  $this->logger->log(LogLevel::WARNING, 'No fulltext ' . $this->doc->pid );
             Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
         }
         return $fulltext;
@@ -347,6 +354,12 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->init($conf);
         // Load current document.
         $this->loadDocument();
+	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+
+	if ($_GET[$this->prefixId]["create"] == 1) {
+	  $this->logger->log(LogLevel::WARNING, "PageView main create value: "  . $_GET[$this->prefixId]["create"]);
+	  FullTextGenerator::createFullText($this->doc);
+	}
         if (
             $this->doc === null
             || $this->doc->numPages < 1
@@ -372,7 +385,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->getTemplate();
         // Get image data.
         $this->images[0] = $this->getImage($this->piVars['page']);
-        $this->fulltexts[0] = $this->getFulltext($this->piVars['page']);
+	$this->fulltexts[0] = $this->getFulltext($this->piVars['page']);
         $this->annotationContainers[0] = $this->getAnnotationContainers($this->piVars['page']);
         if ($this->piVars['double'] && $this->piVars['page'] < $this->doc->numPages) {
             $this->images[1] = $this->getImage($this->piVars['page'] + 1);
