@@ -29,7 +29,7 @@ class FullTextGenerator {
     $image_path = "/var/www/html/test_images/" . $page_id;
     file_put_contents($image_path, file_get_contents($image["url"]));
     $text_path = "/var/www/html/test_texts/" . $page_id; 
-    $ocr_shell_command = "tesseract " . $image_path . " " . $text_path . " -l deu";
+    $ocr_shell_command = "tesseract $image_path $text_path -l deu";
     exec($ocr_shell_command);
     $text = preg_replace('/[\x00-\x1F\x7F]/', '', file_get_contents($text_path . ".txt"));
     return $text;
