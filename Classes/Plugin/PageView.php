@@ -273,7 +273,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
                 $fulltext['url'] = $this->cObj->typoLink_URL($linkConf);
             }
 	  $fulltext['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
-	} else if (FullTextGenerator::checkLocal($this->doc)) {
+	} else if (FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])) {
 	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->doc, $this->piVars['page']);
 	} else {
 	  $this->logger->log(LogLevel::WARNING, 'No fulltext ' . $this->doc->pid );
