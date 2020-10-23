@@ -26,12 +26,13 @@ class FullTextGenerator {
   */
   static function createFullText($doc, $image, $page_num) {
     $doc_id = FullTextGenerator::getDocLocalId($doc);
-    $text = FullTextGenerator::executeOCR($image);
-    FulltextGenerator::saveXML($doc_id, $text, $page_num);
+    $text = FullTextGenerator::generateOCR($image, $doc_id, $page_num);
+
+    //FulltextGenerator::saveXML($doc_id, $text, $page_num);
   }
 
   # @return scanned text
-  static function executeOCR($image) {
+  static function executeOCR($image, $doc_id, $page_num) {
     $page_id = basename($image["url"]);
     $image_path = self::temp_images_dir . "{$page_id}_$";
     file_put_contents($image_path, file_get_contents($image["url"]));
@@ -41,6 +42,15 @@ class FullTextGenerator {
     // Removing unacceptable characters
     $text = preg_replace('/[\x00-\x1F\x7F]/', '', file_get_contents($text_path . ".txt"));
     return $text;
+  }
+
+  static function generateOCR($image, $doc_id, $page_num) {
+    $page_id = basename($image["url"]);
+    $image_path = self::temp_images_dir . "{$page_id}_$";
+    file_put_contents($image_path, file_get_contents($image["url"]));
+    $xml_path = self::xmls_dir . "{$doc_id}_$page_num"; 
+    $ocr_shell_command = "tesseract $image_path $xml_path -l deu alto";
+    exec($ocr_shell_command);
   }
 
   static private function deleteTemporalFiles() {
