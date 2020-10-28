@@ -81,7 +81,7 @@ class FulltextTool extends \Kitodo\Dlf\Common\AbstractPlugin
 	    $this->logger->log(LogLevel::WARNING, "FulltextTool " . strval(FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])));
             $markerArray['###FULLTEXT_SELECT###'] = '<a class="select switchoff" id="tx-dlf-tools-fulltext" title="" data-dic="fulltext-on:' . htmlspecialchars($this->pi_getLL('fulltext-on', '')) . ';fulltext-off:' . htmlspecialchars($this->pi_getLL('fulltext-off', '')) . '">&nbsp;</a>';
 	} else {
-            $markerArray['###FULLTEXT_SELECT###'] = '<span class="no-fulltext">' . htmlspecialchars($this->pi_getLL('fulltext-not-available', '')) . '</span>';
+	    $markerArray['###FULLTEXT_SELECT###'] = '<span class="no-fulltext">' . htmlspecialchars($this->pi_getLL('fulltext-not-available', '')) . '</span>';
         }
         $content .= $this->templateService->substituteMarkerArray($this->template, $markerArray);
         return $this->pi_wrapInBaseClass($content);

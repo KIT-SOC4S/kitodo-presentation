@@ -389,10 +389,17 @@ dlfViewerFullTextControl.prototype.enableFulltextSelect = function(textBlockFeat
  */
 dlfViewerFullTextControl.fetchFulltextDataFromServer = function(url, image, opt_offset){
     // fetch data from server
-    var request = $.ajax({
-        url,
-        async: false
-    });
+    //while(true) {
+      //try {
+	var request = $.ajax({
+	    url,
+	    async: false
+	});
+      //} catch (err) {
+	//setTimeout(function(){}, 2000);
+      //}
+    //}
+
 
     // parse alto data
     var offset = dlfUtils.exists(opt_offset) ? opt_offset : undefined,

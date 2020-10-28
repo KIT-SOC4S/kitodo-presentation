@@ -339,6 +339,11 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         return [];
     }
 
+    public function createAction($request) {
+	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+	$this->logger->log(LogLevel::WARNING, "form action");
+    }
+
     /**
      * The main method of the PlugIn
      *
@@ -356,10 +361,11 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->loadDocument();
 	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 
-	if ($_GET[$this->prefixId]["create"] == 1) {
-	  $this->logger->log(LogLevel::WARNING, "PageView main create value: "  . $_GET[$this->prefixId]["create"]);
+	if($_POST["request"]) {
+	  //$this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
 	  FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
 	}
+
         if (
             $this->doc === null
             || $this->doc->numPages < 1
