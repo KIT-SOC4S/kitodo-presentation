@@ -276,7 +276,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 	} else if (FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])) {
 	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->doc, $this->piVars['page']);
 	} else {
-	  $this->logger->log(LogLevel::WARNING, 'No fulltext ' . $this->doc->pid );
+	  $this->logger->log(LogLevel::WARNING, 'No fulltext ');
             Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
         }
         return $fulltext;

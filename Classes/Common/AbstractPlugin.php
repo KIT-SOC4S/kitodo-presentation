@@ -70,6 +70,7 @@ abstract class AbstractPlugin extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin
      */
     protected function getTemplate($part = '###TEMPLATE###')
     {
+
         $this->templateService = GeneralUtility::makeInstance(MarkerBasedTemplateService::class);
         if (!empty($this->conf['templateFile'])) {
             // Load template file from configuration.
