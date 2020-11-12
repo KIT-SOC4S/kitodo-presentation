@@ -8,6 +8,7 @@ use TYPO3\CMS\Core\Log\LogLevel;
 class FullTextGenerator extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
   const xmls_dir = "fileadmin/test_xmls/";
+  const temp_xmls_dir = "fileadmin/_temp_/test_xmls/";
   const temp_text_dir = "fileadmin/_temp_/test_texts/";
   const temp_images_dir = "fileadmin/_temp_/test_images/";
   
@@ -26,45 +27,59 @@ class FullTextGenerator extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
   */
   static function createFullText($doc, $image, $page_num) {
     $doc_id = FullTextGenerator::getDocLocalId($doc);
-    $text = FullTextGenerator::generateOCR($image, $doc_id, $page_num);
-
-    //FulltextGenerator::saveXML($doc_id, $text, $page_num);
+    $text_path = FullTextGenerator::generateOCR($image, $doc_id, $page_num);
+    
+    //$logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+    //$logger->log(LogLevel::WARNING, "WIP: " . FullTextGenerator::checkWIP($doc, $page_num));
+    return $text_path;
   }
-
-  # @return scanned text
-  //static function executeOCR($image, $doc_id, $page_num) {
-    //$page_id = basename($image["url"]);
-    //$image_path = self::temp_images_dir . "{$page_id}_$";
-    //file_put_contents($image_path, file_get_contents($image["url"]));
-    //$text_path = self::temp_text_dir . $page_id; 
-    //$ocr_shell_command = "tesseract $image_path $text_path -l deu";
-    //exec($ocr_shell_command);
-    //// Removing unacceptable characters
-    //$text = preg_replace('/[\x00-\x1F\x7F]/', '', file_get_contents($text_path . ".txt"));
-    //return $text;
-  //}
-
+ 
   static function generateOCR($image, $doc_id, $page_num) {
     $page_id = basename($image["url"]);
     $image_path = self::temp_images_dir . "{$page_id}";
     file_put_contents($image_path, file_get_contents($image["url"]));
-    $xml_path = self::xmls_dir . "{$doc_id}_$page_num"; 
-    $ocr_shell_command = "tesseract $image_path $xml_path -l deu alto >/dev/null 2>&1 &";
+    $xml_name =  "{$doc_id}_$page_num";
+
+    $temp_xml_path = self::temp_xmls_dir . $xml_name;  
+    $xml_path = self::xmls_dir . $xml_name;  
+    //$wip_path = "$xml_path-wip.xml";
+
+    FullTextGenerator::createDummyOCR($xml_path . ".xml");
+    $ocr_shell_command = "(tesseract $image_path $temp_xml_path -l um alto > /dev/null 2>&1 ;  mv $temp_xml_path.xml $xml_path.xml) &";
+    $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+
+    $logger->log(LogLevel::WARNING, "shell command: " . $ocr_shell_command);
+    //$ocr_shell_command = "echo 222";
     shell_exec($ocr_shell_command);
+    $logger->log(LogLevel::WARNING, "shell_exec successful");
+    return $xml_path;
   }
 
-  static private function deleteTemporaryFiles() {
-    
+  static function createDummyOCR($path) {
+    $dom = new DOMdocument();
+    $root = $dom->createelement("Fulltext", "WIP");
+    $dom->appendchild($root);
+    $dom->formatOutput = true;
+    $dom->save($path);
+  }
+
+  static function checkWIP($doc, $page_num) {
+    $wip_path = basename(FullTextGenerator::getDocLocalPath($doc, $page_num), ".xml") . "-wip.xml";
+    // TODO deal with @
+    $xml = @simplexml_load_string(file_get_contents($wip_path));
+    if ($xml === "WIP") {
+      return true;
+    }
+    return false;
+
   }
 
   static function getDocLocalPath($doc, $page_num) {
-    if (FullTextGenerator::checkLocal($doc, $page_num)) {
-      $doc_id = FullTextGenerator::getDocLocalId($doc);
-      $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
-      $logger->log(LogLevel::WARNING, "Returning local .xml");
+    $doc_id = FullTextGenerator::getDocLocalId($doc);
+    $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+    $logger->log(LogLevel::WARNING, "Returning local .xml");
 
-      return "fileadmin/test_xmls/{$doc_id}_$page_num.xml";
-    } else return ""; 
+    return "fileadmin/test_xmls/{$doc_id}_$page_num.xml";
   }
 }
 ?>

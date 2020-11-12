@@ -280,8 +280,13 @@ dlfViewerFullTextControl.prototype.activate = function() {
     // if the activate method is called for the first time fetch
     // fulltext data from server
     if (this.fulltextData_ === undefined)  {
+      //try {
         this.fulltextData_ = dlfViewerFullTextControl.fetchFulltextDataFromServer(this.url, this.image);
-
+      //}
+      //catch(e) {
+	//console.log("catched");
+	//$('#tx-dlf-tools-fulltext-refresh').attr("style", "display:inline-block;");
+      //}
         if (this.fulltextData_ !== undefined) {
             // add features to fulltext layer
             this.layers_.textblock.getSource().addFeatures(this.fulltextData_.getTextblocks());
@@ -389,19 +394,25 @@ dlfViewerFullTextControl.prototype.enableFulltextSelect = function(textBlockFeat
  */
 dlfViewerFullTextControl.fetchFulltextDataFromServer = function(url, image, opt_offset){
     // fetch data from server
-    console.log("fetching fulltext");
     var request = $.ajax({
 	url,
 	async: false
     });
 
+   
+    var offset = dlfUtils.exists(opt_offset) ? opt_offset : undefined,
+	parser = new dlfAltoParser(this.image, undefined, undefined, offset);
 
+  if (parser.checkWIP(request.responseXML)) {
+    $("#tx-dlf-fulltext-refresh-modal").attr("style", "display:block;")
+    return undefined;
+  }
     // parse alto data
     var offset = dlfUtils.exists(opt_offset) ? opt_offset : undefined,
       parser = new dlfAltoParser(image, undefined, undefined, offset),
       fulltextCoordinates = request.responseXML ? parser.parseFeatures(request.responseXML) :
-            request.responseText ? parser.parseFeatures(request.responseText) : [];
-
+            request.responseText ? parser.parseFeatures(request.responseText) : []; 
+    
     if (fulltextCoordinates.length > 0) {
         return fulltextCoordinates[0];
     }

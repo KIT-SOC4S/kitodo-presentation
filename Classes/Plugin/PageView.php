@@ -54,7 +54,14 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
      * @access protected
      */
     protected $fulltexts = [];
-
+   
+    /**
+     * Holds information about fulltexts, that are being generated
+     *
+     * @var array
+     * @access protected
+     */
+    protected $pageFulltextWIP = false;
     /**
      * Holds the current AnnotationLists / AnnotationPages
      *
@@ -103,6 +110,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
                         div: "' . $this->conf['elementId'] . '",
                         images: ' . json_encode($this->images) . ',
                         fulltexts: ' . json_encode($this->fulltexts) . ',
+                        pageFulltextWIP: ' . json_encode($this->pageFulltextWIP) . ',
                         annotationContainers: ' . json_encode($this->annotationContainers) . ',
                         useInternalProxy: ' . ($this->conf['useInternalProxy'] ? 1 : 0) . '
                     });
@@ -339,10 +347,6 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         return [];
     }
 
-    public function createAction($request) {
-	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
-	$this->logger->log(LogLevel::WARNING, "form action");
-    }
 
     /**
      * The main method of the PlugIn
@@ -362,8 +366,18 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 
 	if($_POST["request"]) {
-	  //$this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
-	  FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
+
+	  $this->logger->log(LogLevel::WARNING, "PageView: ". implode(",", $_POST["request"]));
+	  // TODO: behaviour for double pages
+	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
+	  $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
+	  if($_POST["request"]["type"] == "book") {
+	    for ($i=1; $i <= $this->doc->numPages; $i++) {
+	      if ($i == $this->piVars['page']) continue;
+	      $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($i), $i);
+	    }
+	  }
+	  $this->pageFulltextWIP = true;
 	}
 
         if (

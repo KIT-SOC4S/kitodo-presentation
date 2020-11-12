@@ -75,17 +75,14 @@ class FulltextTool extends \Kitodo\Dlf\Common\AbstractPlugin
         // Load template file.
         $this->getTemplate();
         $fullTextFile = $this->doc->physicalStructureInfo[$this->doc->physicalStructure[$this->piVars['page']]]['files'][$this->conf['fileGrpFulltext']];
-	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 	// Here we can add new functions buttons
 	if (!empty($fullTextFile) || FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])) {
-	    $this->logger->log(LogLevel::WARNING, "FulltextTool " . strval(FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])));
 	    $markerArray['###FULLTEXT_SELECT###'] = '<a class="select switchoff" id="tx-dlf-tools-fulltext" title="" data-dic="fulltext-on:' . htmlspecialchars($this->pi_getLL('fulltext-on', '')) . ';fulltext-off:' . htmlspecialchars($this->pi_getLL('fulltext-off', '')) . '">&nbsp;</a>';
 	} else {
 	  //$markerArray['###FULLTEXT_SELECT###'] = '<span class="no-fulltext">' . htmlspecialchars($this->pi_getLL('fulltext-not-available', '')) . '</span>';
 	    $markerArray['###FULLTEXT_SELECT###'] = ""; 
         }
         $content .= $this->templateService->substituteMarkerArray($this->template, $markerArray);
-	$this->logger->log(LogLevel::WARNING, "Template: " . $this->template);
         return $this->pi_wrapInBaseClass($content);
     }
 }
