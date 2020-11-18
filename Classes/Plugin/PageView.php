@@ -284,8 +284,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 	} else if (FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])) {
 	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->doc, $this->piVars['page']);
 	} else {
-	  $this->logger->log(LogLevel::WARNING, 'No fulltext ');
-            Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
+	  Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
         }
         return $fulltext;
     }
@@ -367,7 +366,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 
 	if($_POST["request"]) {
 
-	  $this->logger->log(LogLevel::WARNING, "PageView: ". implode(",", $_POST["request"]));
+	  $this->logger->log(LogLevel::WARNING, "PageView: ". implode(",", $_POST));
 	  // TODO: behaviour for double pages
 	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
 	  $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
