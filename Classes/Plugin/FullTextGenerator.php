@@ -14,6 +14,7 @@ class FullTextGenerator {
   
   const ocr_engine = "tesseract";
   const ocr_options = ["-l um alto"];
+  const ocr_delay = 5;
 
   static function getDocLocalPath($doc, $page_num) {
     $page_id = FullTextGenerator::getPageLocalId($doc, $page_num);
@@ -40,7 +41,7 @@ class FullTextGenerator {
 
   static function createBookFullText($doc, $images) {
     for ($i=1; $i <= $doc->numPages; $i++) {
-      $text_path = self::createFullText($doc, $images[$i], $i, false, $i + 5);
+      $text_path = self::createFullText($doc, $images[$i], $i, false, $i * self::ocr_delay);
     }
   }
 
