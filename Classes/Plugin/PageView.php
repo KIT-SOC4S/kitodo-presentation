@@ -365,16 +365,17 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 
 	if($_POST["request"]) {
-
 	  $this->logger->log(LogLevel::WARNING, "PageView: ". implode(",", $_POST));
 	  // TODO: behaviour for double pages
 	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
-	  $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
+	  $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page'], true);
 	  if($_POST["request"]["type"] == "book") {
+	    $images = array();
 	    for ($i=1; $i <= $this->doc->numPages; $i++) {
-	      if ($i == $this->piVars['page']) continue;
-	      $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($i), $i);
+	      $images[$i] = $this->getImage($i);
 	    }
+
+	    FullTextGenerator::createBookFullText($this->doc, $images);
 	  }
 	  $this->pageFulltextWIP = true;
 	}
