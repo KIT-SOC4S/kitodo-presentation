@@ -185,6 +185,12 @@
             <label index="config.fileGrpDownload">Download fileGrp: @USE attribute value (default is "DOWNLOAD")</label>
             <label index="config.fileGrpFulltext">Fulltext fileGrp: @USE attribute value (default is "FULLTEXT")</label>
             <label index="config.fileGrpAudio">Audio fileGrp: @USE attribute value (default is "AUDIO")</label>
+	    <label index="config.fulltextFolder">Generated fulltexts folder</label>
+	    <label index="config.fulltextTempFolder">Temporary folder for fulltexts in progress</label>
+	    <label index="config.fulltextImagesFolder">Temporary folder for images, that are used for OCR</label>
+	    <label index="config.fulltextDummyText">OCR is being generated, please try to refresh the page</label>
+	    <label index="config.ocrEngine">OCR Engine</label>
+	    <label index="config.ocrDelay">Delay</label>
 			<label index="config.indexAnnotations">Handle IIIF annotations with motivation "painting" as fulltext?: Handling annotations as fulltexts means they are indexed (default is "FALSE")</label>
 			<label index="config.iiifThumbnailWidth">Maximum thumbnail width for IIIF images: Only for images without a thumbnail declaration (default is "150")</label>
 			<label index="config.iiifThumbnailHeight">Maximum thumbnail height for IIIF images: Only for images without a thumbnail declaration (default is "150")</label>

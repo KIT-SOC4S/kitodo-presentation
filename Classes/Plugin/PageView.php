@@ -281,8 +281,8 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
                 $fulltext['url'] = $this->cObj->typoLink_URL($linkConf);
             }
 	  $fulltext['mimetype'] = $this->doc->getFileMimeType($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
-	} else if (FullTextGenerator::checkLocal($this->doc, $this->piVars['page'])) {
-	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->doc, $this->piVars['page']);
+	} else if (FullTextGenerator::checkLocal($this->extKey, $this->doc, $this->piVars['page'])) {
+	  $fulltext['url'] = FullTextGenerator::getDocLocalPath($this->extKey, $this->doc, $this->piVars['page']);
 	} else {
 	  Helper::devLog('File not found in fileGrp "' . $this->conf['fileGrpFulltext'] . '"', DEVLOG_SEVERITY_WARNING);
         }
@@ -364,18 +364,19 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->loadDocument();
 	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 
-	if($_POST["request"]) {
+	$this->logger->log(LogLevel::WARNING, "conf" . $conf);
+	if ($_POST["request"]) {
 	  $this->logger->log(LogLevel::WARNING, "PageView: ". implode(",", $_POST));
 	  // TODO: behaviour for double pages
 	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
-	  $text_path = FullTextGenerator::createFullText($this->doc, $this->getImage($this->piVars['page']), $this->piVars['page'], true);
+	  $text_path = FullTextGenerator::createPageFullText($this->extKey, $this->doc, $this->getImage($this->piVars['page']), $this->piVars['page']);
 	  if($_POST["request"]["type"] == "book") {
 	    $images = array();
 	    for ($i=1; $i <= $this->doc->numPages; $i++) {
 	      $images[$i] = $this->getImage($i);
 	    }
 
-	    FullTextGenerator::createBookFullText($this->doc, $images);
+	    FullTextGenerator::createBookFullText($this->extKey, $this->doc, $images);
 	  }
 	  $this->pageFulltextWIP = true;
 	}
