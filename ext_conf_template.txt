@@ -22,24 +22,24 @@ fileGrpDownload = DOWNLOAD
 fileGrpFulltext = FULLTEXT
 # cat=Files; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fileGrpAudio
 fileGrpAudio = AUDIO
-fulltextOCR {
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextFolder
-  fulltextFolder = fileadmin/test_xmls
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextTempFolder
-  fulltextTempFolder = fileadmin/_temp_/test_xmls
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextImagesFolder
-  fulltextImagesFolder = fileadmin/_temp_/test_images
-  # cat=Fulltext Storage; type=boolean; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextDummy
-  fulltextDummy=true
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextDummyText
-  fulltextDummyText=some text
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrEngine
-  ocrEngine=tesseract
-  # cat=Fulltext Storage; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrOptions
-  ocrOptions=-l um alto
-  # cat=Fulltext Storage; type=int; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrDelay
-  ocrDelay=6
-}
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextFolder
+fulltextFolder = fileadmin/test_xmls
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextTempFolder
+fulltextTempFolder = fileadmin/_temp_/test_xmls
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.fulltextImagesFolder
+fulltextImagesFolder = fileadmin/_temp_/test_images
+# cat=FulltextOCR; type=boolean; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrDummy
+ocrDummy=true
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrDummyText
+ocrDummyText=OCR is being prepared, please try to refresh the page
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrEngine
+ocrEngine=tesseract
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrLanguages
+ocrLanguages=um
+# cat=FulltextOCR; type=string; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrOptions
+ocrOptions=alto
+# cat=FulltextOCR; type=int; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrDelay
+ocrDelay=0
 # cat=IIIF; type=boolean; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.indexAnnotations
 indexAnnotations = 0
 # cat=IIIF; type=int[1-2000]; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.iiifThumbnailWidth

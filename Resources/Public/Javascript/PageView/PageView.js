@@ -55,13 +55,6 @@ var dlfViewer = function(settings){
     this.fulltexts = dlfUtils.exists(settings.fulltexts) ? settings.fulltexts : [];
 
     /**
-     * Work in progress fulltext information
-     * * @type {boolean}
-     * @private
-     */
-    this.pageFulltextWIP = dlfUtils.exists(settings.pageFulltextWIP) ? settings.pageFulltextWIP : false;
-
-    /**
      * IIIF annotation lists URLs for the current canvas
      * @type {Array.<string|?>}
      * @private
@@ -150,30 +143,6 @@ var dlfViewer = function(settings){
     this.init(dlfUtils.exists(settings.controls) ? settings.controls : []);
 };
 
-dlfViewer.prototype.showRefreshModal = function() {
-  var modal = document.getElementById("tx-dlf-fulltext-refresh-modal");
-
-  // Get the button that opens the modal
-  //var btn = document.getElementById("myBtn");
-
-  // Get the <span> element that closes the modal
-  var span = document.getElementsByClassName("close")[0];
-
-  // When the user clicks the button, open the modal 
-   // When the user clicks on <span> (x), close the modal
-  span.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  // When the user clicks anywhere outside of the modal, close it
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-}
-
 /**
  * Methods inits and binds the custom controls to the dlfViewer. Right now that are the
  * fulltext and the image manipulation control
@@ -186,22 +155,13 @@ dlfViewer.prototype.addCustomControls = function(controlNames) {
         imageManipulationControl = undefined,
         images = this.images;
 
-    this.showRefreshModal();
     // Adds fulltext behavior only if there is fulltext available and no double page
     // behavior is active
     if (this.fulltexts[0] !== undefined && this.fulltexts[0].url !== '' && this.fulltexts[0].url !== undefined && this.images.length === 1) {
-	$('#tx-dlf-fulltexttool-create').remove();
-	$('#tx-dlf-fulltexttool-create').remove();
+	$('.ocr-create').remove();
         fulltextControl = new dlfViewerFullTextControl(this.map, this.images[0], this.fulltexts[0].url);
-	console.log(this.fulltexts[0].url);
     } else {
-	//TODO: remove console log
-	console.log("removing fulltext");
-        $('#tx-dlf-tools-fulltext').remove();
-      //if (this.pageFulltextWIP) {
-	//$('#tx-dlf-fulltexttool-create').remove();
-	//$('#tx-dlf-tools-fulltext-refresh').attr("style", "display:inline-block;");
-      //}
+        $('.fulltext').remove();
     }
 
     if (this.annotationContainers[0] !== undefined && this.annotationContainers[0].annotationContainers !== undefined

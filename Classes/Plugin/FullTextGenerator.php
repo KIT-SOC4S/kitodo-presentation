@@ -10,16 +10,6 @@ class FullTextGenerator {
 
   protected $conf = [];
 
-  //const xmls_dir = "fileadmin/test_xmls/";
-  //const temp_xmls_dir = "fileadmin/_temp_/test_xmls/";
-  //const temp_text_dir = "fileadmin/_temp_/test_texts/";
-  //const temp_images_dir = "fileadmin/_temp_/test_images/";
-  
-  
-  //const ocr_engine = "tesseract";
-  //const ocr_options = ["-l um alto"];
-  //const ocr_delay = 6;
-
   private static function getDocLocalId($doc) {
     return $doc->toplevelId;
   }
@@ -48,54 +38,60 @@ class FullTextGenerator {
     return file_exists($conf['fulltextTempFolder'] . '/' . self::getPageLocalId($doc, $page_num) . ".xml");
   }
 
-  public static function createBookFullText($ext_key, $doc, $images) { 
+  public static function createBookFullText($ext_key, $doc, $images_urls) { 
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
       ->get($ext_key)['fulltextOCR'];
     
     for ($i=1; $i <= $doc->numPages; $i++) {
+      $delay = $i * $conf['ocrDelay'];
       if (!(self::checkLocal($ext_key, $doc, $page_num) || self::checkInProgress($ext_key, $doc, $page_num))) {
-	self::generatePageOCR($conf, $doc, $images[$i], $i, $i * $conf['ocrDelay']);
+	self::generatePageOCR($conf, $doc, $images_urls[$i], $i, $delay);
       }
     }
   }
 
-  public static function createPageFullText($ext_key, $doc, $image, $page_num) {
+  public static function createPageFullText($ext_key, $doc, $image_url, $page_num) {
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
       ->get($ext_key)['fulltextOCR'];
     
     if (!(self::checkLocal($ext_key, $doc, $page_num) || self::checkInProgress($ext_key, $doc, $page_num))) {
-      return self::generatePageOCR($conf, $doc, $image, $page_num);
+      return self::generatePageOCR($conf, $doc, $image_url, $page_num);
     }
   }
 
   /*
-      Main Method for cration of new Fulltext for a page
+      Main Method for creation of new Fulltext for a page
       Saves a XML file with fulltext
   */
-  private static function generatePageOCR($conf, $doc, $image, $page_num, $sleep_interval = 0) { 
-    $page_id = self::getPageLocalId($doc, $page_num);
-    $image_path = $conf['fulltextImagesFolder'] . $page_id;
-    file_put_contents($image_path, file_get_contents($image["url"]));
-
-    $xml_path = $conf['fulltextFolder'] . "/" . $page_id;
-    $temp_xml_path = $conf['fulltextTempFolder'] . "/" . $page_id;
-
-    $ocr_shell_command = "";
-    if ($conf['fulltextDummy']) {
-      self::createDummyOCR($xml_path . ".xml");
-      $ocr_shell_command = $conf['ocrEngine'] . " $image_path $temp_xml_path " . $conf['ocrOptions'] . " && mv $temp_xml_path.xml $xml_path.xml";
-    } else {
-      $ocr_shell_command = $conf['ocrEngine'] . " $image_path $xml_path " . $conf['ocrOptions'];
-    }
+  private static function generatePageOCR($conf, $doc, $image_url, $page_num, $sleep_interval = 0) { 
 
     $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
-    $logger->log(LogLevel::WARNING, "conf:" . implode(' ', $conf));
-    $logger->log(LogLevel::WARNING, "ocr command:" . $ocr_shell_command);
 
-    exec("( sleep $sleep_interval && $ocr_shell_command ) > /dev/null 2>&1 &");
+
+    $page_id = self::getPageLocalId($doc, $page_num);
+    $image_path = $conf['fulltextImagesFolder'] . "/$page_id";
+    //file_put_contents($image_path, file_get_contents($image_url);
+
+    $xml_path = $conf['fulltextFolder'] . "/$page_id";
+    $temp_xml_path = $conf['fulltextTempFolder'] . "/$page_id";
+
+    $lock_folder = $conf['fulltextTempFolder'] . "/lock";
+
+    $image_download_command = "wget $image_url -O $image_path";  
+    if ($conf['ocrDummyText']) {
+      self::createDummyOCR($xml_path . ".xml", $conf['ocrDummyText']);
+      $ocr_shell_command = 
+	$conf['ocrEngine'] . " $image_path $temp_xml_path " . " -l " . $conf['ocrLanguages'] . " " . $conf['ocrOptions'] . " && mv -f $temp_xml_path.xml $xml_path.xml;";
+    } else {
+      $ocr_shell_command = 
+	$conf['ocrEngine'] . " $image_path $xml_path " . " -l " . $conf['ocrLanguages'] . " " . $conf['ocrOptions'] . ";";
+    }
+    $locked_command = "while ! mkdir \"$lock_folder\"; do sleep 3; done; $ocr_shell_command rm -r $lock_folder;" ;
+    $logger->log(LogLevel::WARNING, "ocr command: " . $locked_command);
+    exec("($image_download_command && sleep $sleep_interval && ($locked_command)) > /dev/null 2>&1 &", $output, $result);
   }
 
-  private static function createDummyOCR($path) {
+  private static function createDummyOCR($path, $text) {
 
     $dom = new DOMdocument();
 
@@ -110,7 +106,7 @@ class FullTextGenerator {
     $print_space = $dom->createelement("PrintSpace");
     $textblock = $dom->createelement("TextBlock");
   
-    $text = ["\n","\n","\n","\n","\n","\n","\n","\n","OCR is being prepared, please try to refresh the page"];
+    $text = ["\n","\n","\n","\n","\n","\n","\n","\n", $text];
     foreach($text as $line) {
       $textline = $dom->createelement("TextLine");
       $string = $dom->createelement("String");
@@ -128,6 +124,11 @@ class FullTextGenerator {
     $dom->appendchild($root);
     $dom->formatOutput = true;
     $dom->save($path);
+  }
+
+  static private function countProcesses($ocr_engine) {
+    $count_command = "ps aux | grep $ocr_engine | wc";
+    return exec($count_command);
   }
 
   //static function checkWIP($doc, $page_num) {

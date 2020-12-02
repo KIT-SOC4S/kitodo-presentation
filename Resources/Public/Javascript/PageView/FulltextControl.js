@@ -399,14 +399,6 @@ dlfViewerFullTextControl.fetchFulltextDataFromServer = function(url, image, opt_
 	async: false
     });
 
-   
-    var offset = dlfUtils.exists(opt_offset) ? opt_offset : undefined,
-	parser = new dlfAltoParser(this.image, undefined, undefined, offset);
-
-  if (parser.checkWIP(request.responseXML)) {
-    $("#tx-dlf-fulltext-refresh-modal").attr("style", "display:block;")
-    return undefined;
-  }
     // parse alto data
     var offset = dlfUtils.exists(opt_offset) ? opt_offset : undefined,
       parser = new dlfAltoParser(image, undefined, undefined, offset),

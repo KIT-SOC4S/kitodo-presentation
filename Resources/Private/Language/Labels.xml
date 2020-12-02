@@ -188,8 +188,11 @@
 	    <label index="config.fulltextFolder">Generated fulltexts folder</label>
 	    <label index="config.fulltextTempFolder">Temporary folder for fulltexts in progress</label>
 	    <label index="config.fulltextImagesFolder">Temporary folder for images, that are used for OCR</label>
-	    <label index="config.fulltextDummyText">OCR is being generated, please try to refresh the page</label>
+	    <label index="config.ocrDummy">Create dummy file</label>
+	    <label index="config.ocrDummyText">OCR is being generated, please try to refresh the page</label>
 	    <label index="config.ocrEngine">OCR Engine</label>
+	    <label index="config.ocrLanguages">OCR Languages (separated by space)</label>
+	    <label index="config.ocrOptions">OCR command options (separated by space)</label>
 	    <label index="config.ocrDelay">Delay</label>
 			<label index="config.indexAnnotations">Handle IIIF annotations with motivation "painting" as fulltext?: Handling annotations as fulltexts means they are indexed (default is "FALSE")</label>
 			<label index="config.iiifThumbnailWidth">Maximum thumbnail width for IIIF images: Only for images without a thumbnail declaration (default is "150")</label>

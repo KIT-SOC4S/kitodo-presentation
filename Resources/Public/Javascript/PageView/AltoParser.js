@@ -181,17 +181,6 @@ dlfAltoParser.prototype.parseFeatures = function(document) {
     return pageFeatures;
 };
 
-dlfAltoParser.prototype.checkWIP = function(document) {
-  var parsedDoc = this.parseXML_(document),
-    $xml = $(parsedDoc),
-    $fulltext = $xml.find("Fulltext");
-
-  if ($fulltext && $fulltext.text() === "WIP") {
-    return true;
-  } 
-  return false;
-}
-
 /**
  * Parse from an alto element a OpenLayers feature object
  * @param {Element} node
