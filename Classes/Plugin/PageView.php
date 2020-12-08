@@ -92,7 +92,8 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
             'Resources/Public/Javascript/PageView/AnnotationControl.js',
             'Resources/Public/Javascript/PageView/ImageManipulationControl.js',
             'Resources/Public/Javascript/PageView/FulltextControl.js',
-            'Resources/Public/Javascript/PageView/PageView.js'
+	    'Resources/Public/Javascript/PageView/PageView.js',
+	    'Resources/Public/Javascript/PageView/OCRHandler.js'
         ];
         // Viewer configuration.
         $viewerConfiguration = '
@@ -357,6 +358,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 	
 
+	// Checking if OCR request was sent
 	if ($_POST["request"]) {
 	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
 	  FullTextGenerator::createPageFullText($this->extKey, $this->doc, $this->getImage($this->piVars['page'])["url"], $this->piVars['page']);

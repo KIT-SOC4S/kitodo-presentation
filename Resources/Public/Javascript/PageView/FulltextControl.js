@@ -404,7 +404,12 @@ dlfViewerFullTextControl.fetchFulltextDataFromServer = function(url, image, opt_
       parser = new dlfAltoParser(image, undefined, undefined, offset),
       fulltextCoordinates = request.responseXML ? parser.parseFeatures(request.responseXML) :
             request.responseText ? parser.parseFeatures(request.responseText) : []; 
-    
+   
+    var wip_handler = new dlfOCRHandler();
+    if (wip_handler.checkWIP(request.responseXML)) {
+	return undefined;
+    }
+
     if (fulltextCoordinates.length > 0) {
         return fulltextCoordinates[0];
     }
