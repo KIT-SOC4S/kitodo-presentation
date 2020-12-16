@@ -40,6 +40,8 @@ ocrLanguages=um
 ocrOptions=alto
 # cat=FulltextOCR; type=int; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrDelay
 ocrDelay=0
+# cat=FulltextOCR; type=boolean; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.ocrLock
+ocrLock=true
 # cat=IIIF; type=boolean; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.indexAnnotations
 indexAnnotations = 0
 # cat=IIIF; type=int[1-2000]; label=LLL:EXT:dlf/Resources/Private/Language/Labels.xml:config.iiifThumbnailWidth

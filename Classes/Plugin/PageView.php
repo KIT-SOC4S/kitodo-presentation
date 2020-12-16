@@ -15,7 +15,6 @@ namespace Kitodo\Dlf\Plugin;
 use Kitodo\Dlf\Common\Helper;
 use Kitodo\Dlf\Common\IiifManifest;
 use Kitodo\Dlf\Plugin\FullTextGenerator;
-use TYPO3\CMS\Core\Log\LogLevel;
 use Ubl\Iiif\Presentation\Common\Model\Resources\ManifestInterface;
 use Ubl\Iiif\Presentation\Common\Vocabulary\Motivation;
 
@@ -354,11 +353,8 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->init($conf);
         // Load current document.
         $this->loadDocument();
-	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
-	
 
 	if ($_POST["request"]) {
-	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
 	  FullTextGenerator::createPageFullText($this->extKey, $this->doc, $this->getImage($this->piVars['page'])["url"], $this->piVars['page']);
 	  header("Cache-Control", "no-cache");
 	  if($_POST["request"]["type"] == "book") {
