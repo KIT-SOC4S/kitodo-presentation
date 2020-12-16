@@ -92,7 +92,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
             'Resources/Public/Javascript/PageView/AnnotationControl.js',
             'Resources/Public/Javascript/PageView/ImageManipulationControl.js',
             'Resources/Public/Javascript/PageView/FulltextControl.js',
-            'Resources/Public/Javascript/PageView/PageView.js'
+	    'Resources/Public/Javascript/PageView/PageView.js'
         ];
         // Viewer configuration.
         $viewerConfiguration = '
@@ -257,7 +257,7 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
     protected function getFulltext($page)
     {
         $fulltext = [];
-        // Get fulltext link.
+
         if (!empty($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']])) {
 	  $fulltext['url'] = $this->doc->getFileLocation($this->doc->physicalStructureInfo[$this->doc->physicalStructure[$page]]['files'][$this->conf['fileGrpFulltext']]);
             if ($this->conf['useInternalProxy']) {
@@ -352,13 +352,10 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
         $this->init($conf);
         // Load current document.
         $this->loadDocument();
-	$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
 	
 
 	if ($_POST["request"]) {
-	  $this->logger->log(LogLevel::WARNING, "PageView main create value: " . $_POST["request"]["create"]);
 	  FullTextGenerator::createPageFullText($this->extKey, $this->doc, $this->getImage($this->piVars['page'])["url"], $this->piVars['page']);
-	  header("Cache-Control", "no-cache");
 	  if($_POST["request"]["type"] == "book") {
 	    $images = array();
 	    for ($i=1; $i <= $this->doc->numPages; $i++) {

@@ -50,7 +50,7 @@ class FullTextGenerator {
    */
   protected static function getDocLocalPath($ext_key, $doc) {
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
-      ->get($ext_key)['fulltextOCR'];
+      ->get($ext_key);
     $doc_id = self::getDocLocalId($doc);
     return $conf['fulltextFolder'] . "/$doc_id";
   }
@@ -85,7 +85,7 @@ class FullTextGenerator {
    */
   public static function checkLocal($ext_key, $doc, $page_num) {
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
-      ->get($ext_key)['fulltextOCR'];
+      ->get($ext_key);
     return file_exists(self::getPageLocalPath($ext_key, $doc, $page_num));
   }
 
@@ -102,7 +102,7 @@ class FullTextGenerator {
    */
   public static function checkInProgress($ext_key, $doc, $page_num) {
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
-      ->get($ext_key)['fulltextOCR'];
+      ->get($ext_key);
     return file_exists($conf['fulltextTempFolder'] . '/' . self::getPageLocalId($doc, $page_num) . ".xml");
   }
 
@@ -119,7 +119,7 @@ class FullTextGenerator {
    */
   public static function createBookFullText($ext_key, $doc, $images_urls) { 
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
-      ->get($ext_key)['fulltextOCR'];
+      ->get($ext_key);
     
     for ($i=1; $i <= $doc->numPages; $i++) {
       $delay = $i * $conf['ocrDelay'];
@@ -142,7 +142,7 @@ class FullTextGenerator {
    */
   public static function createPageFullText($ext_key, $doc, $image_url, $page_num) {
     $conf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ExtensionConfiguration::class)
-      ->get($ext_key)['fulltextOCR'];
+      ->get($ext_key);
 
     if (!(self::checkLocal($ext_key, $doc, $page_num) || self::checkInProgress($ext_key, $doc, $page_num))) {
       return self::generatePageOCR($ext_key, $conf, $doc, $image_url, $page_num);
@@ -165,9 +165,6 @@ class FullTextGenerator {
    */
   protected static function generatePageOCR($ext_key, $conf, $doc, $image_url, $page_num, $sleep_interval = 0) { 
 
-    $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
-    $logger->log(LogLevel::WARNING, "conf: " . implode("; ", $conf));
-    
     $page_id = self::getPageLocalId($doc, $page_num);
     $image_path = $conf['fulltextImagesFolder'] . "/$page_id";
 
@@ -191,7 +188,6 @@ class FullTextGenerator {
     $ocr_shell_command .= " rm $image_path";
     // Locking command, so that only one instance of tesseract can run in one time moment
     $locked_command = "while ! mkdir \"$lock_folder\"; do sleep 3; done; $ocr_shell_command rm -r $lock_folder;" ;
-    $logger->log(LogLevel::WARNING, "ocr command: " . $locked_command);
     exec("($image_download_command && sleep $sleep_interval && ($locked_command)) > /dev/null 2>&1 &", $output, $result);
   }
 
