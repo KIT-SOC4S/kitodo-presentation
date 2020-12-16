@@ -42,9 +42,23 @@ Next changes were done in 'dfgviewer' extension
 ### PageView.tmpl
 PageView template was updated in order to show buttons for ocr creation
 
+## Feature branches:
+### FulltextGenerator as a tool
+**Branch:** `fulltextgenerator_as_tool` for dlf and dfgviewer
+**Description:** As Sebastian Meyer has said on 3 Milestone meeting, it is actually very useful to have OCR controls included as _Tool_ in Kitodo. In this branch a tool FulltextGeneratorTool is added, so that displaying of OCR controls is controlled from backend.
+**What can be improved:** This feature is not completely done, because request for OCR is still handled in PageView module, which should be changed.
+
+### Notification feature
+**Branch:** `notification_feature` for dlf and `wip_notification_feature` and dfgviewer
+**Description:** This feature changes frontend behaviour, adds a modal window with information, that OCR is right now in progress. With that feature, user doesn't need to reload the page in order to see generated text, but it will be displayed automatically as soon as it is ready (Well, user still has to press the "Show Fulltext" button)
+**What can be improved:** This feature is changing some of the frontend modules and so has to be reviewed, in order to not to damage the existing modules 
 
 ## Issues:
-1. **Issue:** Parallel execution of several (typically > 2) tesseract processes could cause freeze of all processes. It is critical in two scenaries: 1. when several users request ocr for different pages 2. When OCR for a book is called. (To notice, if two users request OCR for same book, it will be created only once, because a dummy file will be created for each page and FulltextGenerator won't create OCR for pages with corresponding dummy files. That is another point, why dummy files are important in current implementation)
+1. **Issue:** There are several problems with parallelization due to that project uses parallelity only by using shell execution.
+
+Parallel execution of several (typically > 2) tesseract processes could cause freeze of all processes on some machines. It is critical in two scenaries: 1. when several users request ocr for different pages 2. When OCR for a book is called. (To notice, if two users request OCR for same book, it will be created only once, because a dummy file will be created for each page and FulltextGenerator won't create OCR for pages with corresponding dummy files. That is another point, why dummy files are important in current implementation)
+
+Furthermore, the backend downloads images needed for OCR using `wget`
 **Possible Solution:** There are several solutions for this problem: 
     1. If there is no problem with adding more dependncies to project, you can update php in order to support parallelity and use some packages, that allow to create more threads. Then you can either start OCR as it was, from shell, but in separate threads, count running threads and use something like semaphore to handle amount of current running threads.
     2. Another possible solution would be a bash script, that will take all input data and run in background. It must check for already running instances of this script/ocr engine and start new processes accordingly
@@ -56,4 +70,5 @@ PageView template was updated in order to show buttons for ocr creation
 
 1. There is a possibility that OCR process will be interrupted or some kind of error can happen, so that WIP file will not be overwritten by actual OCR. In this case, it must be checked and WIP file should be either deleted and user should have an opportunity to start OCR process again or OCR should be performed automatically
 
+2. A progress bar should be shown, when OCR for a book is already in progress. For that we have to either send information about created/wip pages from backend, which is not so flexible because user has to reload page to see changes. Another solution would be provide some way to check existence of these pages from frontend, i.e. using AJAX. For example we can send a folder, where texts will be saved. Actually this solution also brings some drawbacks.
 
