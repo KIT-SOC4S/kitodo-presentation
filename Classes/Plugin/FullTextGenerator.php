@@ -178,10 +178,10 @@ class FullTextGenerator {
 
     $image_download_command = "wget $image_url -O $image_path";  
     if ($conf['ocrDummyText']) {
-      self::createDummyOCR($xml_path, $conf['ocrDummyText']);
-      $ocr_shell_command = 
-	$conf['ocrEngine'] . " $image_path $temp_xml_path " . " -l " . $conf['ocrLanguages'] . " " . $conf['ocrOptions'] . " && mv -f $temp_xml_path.xml $xml_path;";
+      // tesseract fileadmin/test_images/test.jpg fileadmin/temp_xmls/test_temp.xml -l de alto && mv -f fileadmin/temp_xmls/test.xml fileadmin/test_xmls/test.xml
+      $ocr_shell_command = self::getDummyOCRCommand($conf, $image_path, $temp_xml_path, $xml_path);
     } else {
+      // tesseract fileadmin/test_images/test.jpg fileadmin/test_xmls/test.xml -l de alto 
       $ocr_shell_command = 
 	$conf['ocrEngine'] . " $image_path $xml_path " . " -l " . $conf['ocrLanguages'] . " " . $conf['ocrOptions'] . ";";
     }
@@ -191,7 +191,12 @@ class FullTextGenerator {
     if ($conf['ocrLock']) {
       $ocr_shell_command= "while ! mkdir \"$lock_folder\"; do sleep 3; done; $ocr_shell_command rm -r $lock_folder;" ;
     }
-    exec("($image_download_command && sleep $sleep_interval && ($ocr_shell_command)) > /dev/null 2>&1 &", $output, $result);
+    exec("($image_download_command && sleep $sleep_interval && ($ocr_shell_command)) > /dev/null 2>&1 &");
+  }
+
+  protected static function getDummyOCRCommand($conf, $image_path, $temp_xml_path, $xml_path) {
+      self::createDummyOCR($xml_path, $conf['ocrDummyText']);
+      return $conf['ocrEngine'] . " $image_path $temp_xml_path " . " -l " . $conf['ocrLanguages'] . " " . $conf['ocrOptions'] . " && mv -f $temp_xml_path.xml $xml_path;";
   }
 
   /**

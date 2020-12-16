@@ -356,7 +356,6 @@ class PageView extends \Kitodo\Dlf\Common\AbstractPlugin
 
 	if ($_POST["request"]) {
 	  FullTextGenerator::createPageFullText($this->extKey, $this->doc, $this->getImage($this->piVars['page'])["url"], $this->piVars['page']);
-	  header("Cache-Control", "no-cache");
 	  if($_POST["request"]["type"] == "book") {
 	    $images = array();
 	    for ($i=1; $i <= $this->doc->numPages; $i++) {
