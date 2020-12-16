@@ -6,16 +6,16 @@
 1. Install DFG-Viewer und Kitodo.Presentation, [ Guide ](https://github.com/UB-Mannheim/kitodo-presentation/wiki)
 2. Install tesseract for command line [Tesseract-Wiki](https://tesseract-ocr.github.io/tessdoc/)
 3. Install language data, for example [UB-Mannheim Fraktur-test](https://ub-backup.bib.uni-mannheim.de/~stweil/ocrd-train/data/Fraktur_5000000/tessdata_fast/Fraktur-fast.traineddata) or [tessdata](https://github.com/tesseract-ocr/tessdata)
-- It has to be moved to the tessdata folder. By default it must be in /usr/share/
-- Tessdata folder can also be set by TESSDATA_PREFIX environment variable 
-- More info and language data: <https://tesseract-ocr.github.io/tessdoc/Data-Files.html>
+    - It has to be moved to the tessdata folder. By default it must be in /usr/share/
+    - Tessdata folder can also be set by TESSDATA_PREFIX environment variable 
+    - More info and language data: <https://tesseract-ocr.github.io/tessdoc/Data-Files.html>
 4. Set configuration variables in dlf extension ext_conf_template.txt or direct in TYPO3 Admin panel (Settings -> Extension settings -> dlf -> Fulltext OCR) 
-  There are some advises for setting those variables:
-  - fulltextFolder, fulltextTempFolder, fulltextImagesFolder: need to be located somewhere in fileadmin folder, so that user had access to read them 
-  - ocrDummy : advised to be set to 'true' because there is no another way of saving the information that text's OCR is in progress (of course when user notification and muötithreading features are not enabled. In case they are, this variable can be set to false)
-  - ocrEngine : in our example it is 'tesseract' 
-  - ocrLanguages : list of language data, that must be used for OCR, separated by spaces
-  - ocrOptions: in case of DFG-Viewer must be at least 'alto' 
+    There are some advises for setting those variables:
+    - fulltextFolder, fulltextTempFolder, fulltextImagesFolder: need to be located somewhere in fileadmin folder, so that user had access to read them 
+    - ocrDummy : advised to be set to 'true' because there is no another way of saving the information that text's OCR is in progress (of course when user notification and muötithreading features are not enabled. In case they are, this variable can be set to false)
+    - ocrEngine : in our example it is 'tesseract' 
+    - ocrLanguages : list of language data, that must be used for OCR, separated by spaces
+    - ocrOptions: in case of DFG-Viewer must be at least 'alto' 
 
 Warning: in some versions of tesseract there is no support for ALTO format. During development was used a compiled version, which sources are located in Tesseract's GitHub master branch. This version does support ALTO format
   - Delay: is used for delaying the tesseract execution, for example when OCR for book is in progress. It is needed because Tesseract doesn't fully support multithreading (it supports maximal 2 threads and if running from console, running tesseract more than twice causes freezing of all tesseract processes. This is a [known issue](#issues), that has to be fixed) 
