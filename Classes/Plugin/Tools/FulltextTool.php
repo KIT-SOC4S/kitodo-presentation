@@ -47,6 +47,7 @@ class FulltextTool extends \Kitodo\Dlf\Common\AbstractPlugin
         }
         // Load current document.
         $this->loadDocument();
+
         if (
             $this->doc === null
             || $this->doc->numPages < 1
